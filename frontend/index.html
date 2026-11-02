@@ -3,21 +3,20 @@
 
 <head>
     <!--
-        Define o conjunto de caracteres utilizado pela página.
-
-        UTF-8 permite apresentar corretamente acentos,
-        cedilhas e outros caracteres especiais.
+        Declara que o documento utiliza a versão HTML5.
+        Essa declaração deve aparecer antes de qualquer tag.
     -->
+    <!DOCTYPE html>
     <meta charset="UTF-8">
 
     <!--
-        Configura a área visível da página em dispositivos móveis.
+        Configura a apresentação da página em dispositivos móveis.
 
         width=device-width:
-        faz a largura da página acompanhar a largura da tela.
+        utiliza a largura real da tela do dispositivo.
 
         initial-scale=1.0:
-        define o nível inicial de zoom como 100%.
+        inicia a página com zoom de 100%.
     -->
     <meta
         name="viewport"
@@ -25,68 +24,392 @@
     >
 
     <!--
-        Define o título exibido na aba do navegador.
+        Texto apresentado na aba do navegador.
     -->
     <title>Sistema Acadêmico DS II</title>
 
     <!--
-        Conecta o arquivo HTML ao arquivo de estilos CSS.
+        Conecta a página ao arquivo de estilos.
 
-        O caminho ./css/estilo.css indica que:
-        – o navegador começa na pasta onde está index.html;
-        – entra na pasta css;
-        – carrega o arquivo estilo.css.
+        O caminho indica que:
+        1. partimos da pasta onde está index.html;
+        2. entramos na pasta css;
+        3. carregamos estilo.css.
     -->
     <link rel="stylesheet" href="./css/estilo.css">
 
     <!--
-        Carrega o Model da aplicação.
+        Carrega a camada Model.
 
         O Model contém:
-        – os dados dos alunos;
+        – o array de alunos;
         – as validações;
-        – as regras do cadastro;
-        – os métodos de consulta.
+        – a verificação de RA duplicado;
+        – a criação dos objetos;
+        – os métodos de cadastro e consulta.
 
-        Ele precisa ser carregado antes do Controller,
-        pois o Controller utiliza AlunoModel.
+        Ele é carregado antes do Controller porque
+        o Controller utilizará AlunoModel.
     -->
     <script
         src="./js/model/aluno-model.js"
         defer>
     </script>
 
+    <!--
+        Carrega a camada View.
+
+        Nesta versão, a View será responsável por:
+        – localizar elementos HTML;
+        – ler os valores do formulário;
+        – observar eventos;
+        – apresentar mensagens;
+        – criar linhas na tabela;
+        – apresentar o JSON.
+
+        Ela é carregada antes do Controller porque
+        o Controller utilizará AlunoView.
+    -->
     <script
         src="./js/view/aluno-view.js"
         defer>
     </script>
 
- is arquivos anteriores.
-    
+    <!--
+        Carrega a camada Controller.
+
+        O Controller coordena a comunicação entre
+        o Model e a View.
+
+        Ele precisa ser carregado por último porque
+        depende dos dois objetos anteriores.
+    -->
     <script
         src="./js/controller/aluno-controller.js"
         defer>
     </script>
-    
+
+    <!--
+        O atributo defer possui duas funções importantes:
+
+        1. permite que o navegador continue lendo o HTML
+           enquanto os arquivos JavaScript são baixados;
+
+        2. executa os scripts somente depois que a estrutura
+           HTML tiver sido analisada.
+
+        Os scripts com defer respeitam a ordem em que aparecem:
+
+        aluno-model.js
+              ↓
+        aluno-view.js
+              ↓
+        aluno-controller.js
+    -->
 </head>
 
 <body>
-   elemento main.
+    <!--
+        Cabeçalho visual da aplicação.
 
-    <main>
-       
-        <h1>Sistema Acadêmico DS II</h1>
+        Ele apresenta o nome do sistema e a versão atual.
+    -->
+    <header class="cabecalho">
+        <!--
+            A classe container será utilizada no CSS
+            para limitar a largura e centralizar o conteúdo.
+        -->
+        <div class="container">
+            <!-- Título principal da aplicação. -->
+            <h1>Sistema Acadêmico DS II</h1>
 
-      
-        <p>
-            Primeira versão do sistema utilizando MVC e JSON.
-        </p>
+            <!-- Identificação da versão desenvolvida. -->
+            <p>
+                Versão 0.2 – cadastro de alunos com DOM e eventos
+            </p>
+        </div>
+    </header>
 
-     
-        <p>
-            Abra o console do navegador para acompanhar
-            a execução.
-        </p>
+    <!--
+        Conteúdo principal da página.
+
+        A tag main representa a parte central e mais importante
+        do documento.
+    -->
+    <main class="container">
+        <!--
+            Primeiro cartão da interface.
+
+            Esta seção contém o formulário de cadastro.
+        -->
+        <section class="cartao">
+            <!-- Título da seção. -->
+            <h2>Cadastro de aluno</h2>
+
+            <!-- Orientação para o usuário. -->
+            <p>
+                Preencha os campos abaixo para cadastrar um aluno.
+            </p>
+
+            <!--
+                Formulário utilizado para receber os dados.
+
+                id="form-aluno":
+                permite que a View localize o formulário pelo DOM.
+
+                novalidate:
+                desativa as mensagens automáticas de validação
+                apresentadas pelo navegador.
+
+                Mesmo com required nos campos, utilizaremos
+                o Model para aplicar e demonstrar as regras.
+
+                Quando o botão for pressionado, o formulário
+                disparará o evento submit.
+            -->
+            <form id="form-aluno" novalidate>
+                <!--
+                    Agrupa os campos para que o CSS possa
+                    organizá-los utilizando Grid Layout.
+                -->
+                <div class="grade-formulario">
+                    <!-- Campo destinado ao RA. -->
+                    <div class="campo">
+                        <!--
+                            O atributo for aponta para o id do input.
+
+                            Ao clicar no texto RA, o navegador
+                            coloca o foco no campo correspondente.
+                        -->
+                        <label for="ra">RA</label>
+
+                        <!--
+                            Campo utilizado para receber o RA.
+
+                            id:
+                            utilizado pela View para localizar o elemento.
+
+                            name:
+                            identifica o campo dentro do formulário.
+
+                            placeholder:
+                            apresenta um exemplo enquanto estiver vazio.
+
+                            required:
+                            informa semanticamente que o campo é obrigatório.
+                        -->
+                        <input
+                            type="text"
+                            id="ra"
+                            name="ra"
+                            placeholder="Exemplo: 2026001"
+                            required
+                        >
+                    </div>
+
+                    <!-- Campo destinado ao nome. -->
+                    <div class="campo">
+                        <label for="nome">Nome</label>
+                        <input
+                            type="text"
+                            id="nome"
+                            name="nome"
+                            placeholder="Nome completo"
+                            required
+                        >
+                    </div>
+
+                    <!-- Campo destinado ao e-mail. -->
+                    <div class="campo">
+                        <label for="email">E-mail</label>
+
+                        <!--
+                            type="email" informa que este campo
+                            representa um endereço de e-mail.
+
+                            Como o formulário possui novalidate,
+                            a validação utilizada na atividade
+                            continuará sendo a do Model.
+                        -->
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="aluno@email.com"
+                            required
+                        >
+                    </div>
+
+                    <!-- Campo destinado ao curso. -->
+                    <div class="campo">
+                        <label for="curso">Curso</label>
+                        <input
+                            type="text"
+                            id="curso"
+                            name="curso"
+                            placeholder="Exemplo: DSM"
+                            required
+                        >
+                    </div>
+
+                    <!-- Campo destinado à turma. -->
+                    <div class="campo">
+                        <label for="turma">Turma</label>
+                        <input
+                            type="text"
+                            id="turma"
+                            name="turma"
+                            placeholder="Exemplo: 2 DSM"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <!--
+                    Botão responsável pelo envio do formulário.
+
+                    type="submit" faz com que o clique dispare
+                    o evento submit no elemento form.
+
+                    A View observará esse evento por meio
+                    de addEventListener().
+                -->
+                <button type="submit">
+                    Cadastrar aluno
+                </button>
+            </form>
+
+            <!--
+                Área destinada às mensagens do sistema.
+
+                Ela começa vazia e será atualizada pela View.
+
+                Exemplos:
+
+                Aluno cadastrado com sucesso.
+
+                Já existe um aluno com esse RA.
+
+                role="status":
+                identifica a área como uma mensagem de estado.
+
+                aria-live="polite":
+                permite que leitores de tela anunciem mudanças
+                sem interromper imediatamente o usuário.
+            -->
+            <div
+                id="mensagem"
+                class="mensagem"
+                role="status"
+                aria-live="polite"
+            ></div>
+        </section>
+
+        <!--
+            Segundo cartão da interface.
+
+            Esta seção apresentará os alunos cadastrados.
+        -->
+        <section class="cartao">
+            <!--
+                Agrupa o título e o contador de alunos.
+            -->
+            <div class="titulo-secao">
+                <h2>Alunos cadastrados</h2>
+
+                <!--
+                    A View atualizará este conteúdo.
+
+                    Exemplos:
+
+                    Total: 0
+                    Total: 1
+                    Total: 5
+                -->
+                <p id="total-alunos">
+                    Total: 0
+                </p>
+            </div>
+
+            <!--
+                Contêiner que permite rolagem horizontal.
+
+                Isto evita que uma tabela larga ultrapasse
+                os limites da tela em dispositivos menores.
+            -->
+            <div class="tabela-responsiva">
+                <!--
+                    Tabela responsável pela apresentação
+                    dos alunos cadastrados.
+                -->
+                <table>
+                    <!--
+                        thead contém o cabeçalho da tabela.
+                    -->
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>RA</th>
+                            <th>Nome</th>
+                            <th>E-mail</th>
+                            <th>Curso</th>
+                            <th>Turma</th>
+                            <th>Situação</th>
+                        </tr>
+                    </thead>
+
+                    <!--
+                        tbody receberá as linhas dos alunos.
+
+                        Ele começa vazio porque as linhas serão
+                        criadas dinamicamente pela View.
+
+                        Para cada aluno, a View criará:
+
+                        tr
+                        ├── td com ID
+                        ├── td com RA
+                        ├── td com nome
+                        ├── td com e-mail
+                        ├── td com curso
+                        ├── td com turma
+                        └── td com situação
+                    -->
+                    <tbody id="corpo-tabela-alunos">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!--
+            Terceiro cartão da interface.
+
+            Esta seção apresentará a representação JSON
+            dos alunos cadastrados.
+        -->
+        <section class="cartao">
+            <h2>Representação em JSON</h2>
+
+            <p>
+                A lista abaixo é atualizada após cada cadastro.
+            </p>
+
+            <!--
+                A tag pre preserva:
+
+                – espaços;
+                – indentação;
+                – quebras de linha.
+
+                Por isso, ela é adequada para apresentar
+                o resultado de JSON.stringify(alunos, null, 2).
+
+                O conteúdo inicial é um array vazio:
+
+                []
+            -->
+            <pre id="saida-json">[]</pre>
+        </section>
     </main>
 </body>
 

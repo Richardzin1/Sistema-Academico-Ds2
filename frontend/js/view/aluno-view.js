@@ -1,150 +1,228 @@
+/*
+ * VIEW DE ALUNOS – VERSÃO COM DOM
+ *
+ * Esta View é responsável por:
+ * – localizar elementos HTML;
+ * – ler os campos do formulário;
+ * – observar o evento submit;
+ * – apresentar mensagens;
+ * – montar a tabela;
+ * – apresentar o JSON.
+*/
 const AlunoView = {
 
     /*
-     * Solicita ao usuário os dados necessários para o cadastro.
+     * Objeto que armazenará referências aos elementos HTML.
      *
-     * Cada chamada de prompt() apresenta uma caixa de entrada
-     * e devolve o valor digitado pelo usuário.
+     * Isso evita repetir document.getElementById()
+     * várias vezes durante a execução.
+     */
+    elementos: {},
+
+    /*
+     * Localiza e armazena os elementos da página.
      *
-     * Os valores são reunidos em um único objeto.
+     * Este método deve ser executado antes dos demais.
+     */
+inicializar() {
+        AlunoView.elementos.formulario =
+            document.getElementById("form-aluno");
+
+        AlunoView.elementos.ra =
+            document.getElementById("ra");
+
+        AlunoView.elementos.nome =
+            document.getElementById("nome");
+
+        AlunoView.elementos.email =
+            document.getElementById("email");
+
+        AlunoView.elementos.curso =
+            document.getElementById("curso");
+
+        AlunoView.elementos.turma =
+            document.getElementById("turma");
+
+        AlunoView.elementos.mensagem =
+            document.getElementById("mensagem");
+
+        AlunoView.elementos.corpoTabela =
+            document.getElementById("corpo-tabela-alunos");
+
+        AlunoView.elementos.totalAlunos =
+            document.getElementById("total-alunos");
+
+        AlunoView.elementos.saidaJson =
+            document.getElementById("saida-json");
+    },
+
+    /*
+     * Registra uma função que será executada quando
+     * o formulário for enviado.
+     *
+     * O parâmetro aoEnviar é uma função recebida
+     * do Controller.
+     */
+    configurarFormulario(aoEnviar) {
+        AlunoView.elementos.formulario.addEventListener(
+            "submit",
+            function (evento) {
+                /*
+                 * Impede o comportamento padrão do formulário,
+                 * que seria recarregar a página.
+                 */
+                evento.preventDefault();
+
+                /*
+                 * Lê os valores atuais do formulário.
+                 */
+                const dados = AlunoView.lerDados();
+
+                /*
+                 * Envia os dados para a função fornecida
+                 * pelo Controller.
+                 */
+                aoEnviar(dados);
+            }
+        );
+    },
+
+    /*
+     * Lê a propriedade value de cada campo.
+     *
+     * A View apenas coleta os valores.
+     * A normalização e a validação pertencem ao Model.
      */
     lerDados() {
         return {
-            ra: prompt("Digite o RA do aluno:"),
-            nome: prompt("Digite o nome do aluno:"),
-            email: prompt("Digite o e-mail do aluno:"),
-            curso: prompt("Digite o curso:"),
-            turma: prompt("Digite a turma:")
+            ra: AlunoView.elementos.ra.value,
+            nome: AlunoView.elementos.nome.value,
+            email: AlunoView.elementos.email.value,
+            curso: AlunoView.elementos.curso.value,
+            turma: AlunoView.elementos.turma.value
         };
     },
 
     /*
-     * Apresenta o aluno que foi cadastrado com sucesso.
-     *
-     * O parâmetro aluno recebe o objeto criado pelo Model
-     * e encaminhado pelo Controller.
+     * Apresenta uma mensagem de sucesso.
      */
-    exibirAluno(aluno) {
+    exibirSucesso(mensagem) {
+        AlunoView.elementos.mensagem.textContent = mensagem;
 
         /*
-         * Apresenta uma mensagem simples no console.
+         * Define as classes utilizadas pelo CSS.
          */
-        console.log("Aluno cadastrado com sucesso.");
-
-        /*
-         * console.table() apresenta as propriedades do objeto
-         * em formato de tabela, facilitando a leitura dos dados.
-         */
-        console.table(aluno);
+        AlunoView.elementos.mensagem.className =
+            "mensagem sucesso";
     },
 
     /*
      * Apresenta uma mensagem de erro.
-     *
-     * A View não descobre nem cria o erro.
-     * Ela apenas apresenta a mensagem recebida.
-     *
-     * O parâmetro mensagem será enviado pelo Controller,
-     * depois que o Model identificar o problema.
      */
     exibirErro(mensagem) {
+        AlunoView.elementos.mensagem.textContent = mensagem;
+
+        AlunoView.elementos.mensagem.className =
+            "mensagem erro";
+    },
+
+    /*
+     * Limpa os campos depois de um cadastro bem-sucedido.
+     */
+    limparFormulario() {
+        AlunoView.elementos.formulario.reset();
 
         /*
-         * console.error() apresenta a mensagem como erro.
-         * Dependendo do navegador, a mensagem poderá aparecer
-         * em vermelho ou acompanhada de um ícone de alerta.
+         * Devolve o foco ao campo RA para facilitar
+         * o próximo cadastro.
          */
-        console.error("Erro:", mensagem);
+        AlunoView.elementos.ra.focus();
     },
 
     /*
-     * Pergunta se o usuário deseja realizar outro cadastro.
-     *
-     * confirm() apresenta uma janela com duas opções:
-     * - OK, que devolve true;
-     * - Cancelar, que devolve false.
-     *
-     * Esse valor será utilizado pelo Controller para decidir
-     * se o processo de cadastro deverá continuar.
-     */
-perguntarNovoCadastro() {
-        return confirm("Deseja cadastrar outro aluno?");
-    },
-
-    /*
-     * Apresenta a lista completa de alunos.
-     *
-     * O parâmetro alunos deverá receber um array.
+     * Apresenta a lista de alunos na tabela.
      */
     exibirLista(alunos) {
+        const corpoTabela = AlunoView.elementos.corpoTabela;
 
         /*
-         * A propriedade length informa a quantidade
-         * de elementos existentes no array.
+         * Remove as linhas apresentadas anteriormente.
          */
-        console.log(
-            "Quantidade de alunos cadastrados:",
-            alunos.length
-        );
+        corpoTabela.textContent = "";
 
         /*
-         * Verifica se o array está vazio.
-         *
-         * Se length for igual a zero, nenhum aluno
-         * foi cadastrado.
+         * Atualiza a quantidade de alunos.
+         */
+        AlunoView.elementos.totalAlunos.textContent =
+            `Total: ${alunos.length}`;
+
+        /*
+         * Se não houver alunos, cria uma linha informativa.
          */
         if (alunos.length === 0) {
-            console.log("Nenhum aluno foi cadastrado.");
+            const linha = document.createElement("tr");
+            const celula = document.createElement("td");
 
-            /*
-             * O return encerra a execução deste método.
-             *
-             * Dessa maneira, console.table() não será
-             * executado quando não existirem alunos.
-             */
+            celula.colSpan = 7;
+            celula.textContent = "Nenhum aluno foi cadastrado.";
+
+            linha.appendChild(celula);
+            corpoTabela.appendChild(linha);
+
             return;
         }
 
         /*
-         * Se o array possuir alunos, apresenta todos
-         * os registros em formato de tabela.
+         * Percorre o array e cria uma linha para cada aluno.
          */
-        console.table(alunos);
+        alunos.forEach(function (aluno) {
+            const linha = document.createElement("tr");
+
+            /*
+             * Organiza os valores na mesma ordem
+             * das colunas existentes no HTML.
+             */
+            const valores = [
+                aluno.id,
+                aluno.ra,
+                aluno.nome,
+                aluno.email,
+                aluno.curso,
+                aluno.turma,
+
+                /*
+                 * Operador ternário:
+                 * – se ativo for true, apresenta "Ativo";
+                 * – caso contrário, apresenta "Inativo".
+                 */
+                aluno.ativo ? "Ativo" : "Inativo"
+            ];
+
+            /*
+             * Cria uma célula para cada valor.
+             */
+            valores.forEach(function (valor) {
+                const celula = document.createElement("td");
+
+                /*
+                 * textContent insere o valor como texto.
+                 *
+                 * Não utilizamos innerHTML com dados fornecidos
+                 * pelo usuário.
+                 */
+                celula.textContent = valor;
+
+                linha.appendChild(celula);
+            });
+
+            corpoTabela.appendChild(linha);
+        });
     },
 
     /*
-     * Apresenta os alunos convertidos para o formato JSON.
-     *
-     * O parâmetro textoJson recebe uma string criada
-     * anteriormente por JSON.stringify().
+     * Apresenta o texto JSON dentro da tag pre.
      */
     exibirJson(textoJson) {
-        console.log("Alunos em formato JSON:");
-
-        /*
-         * Neste momento, o conteúdo apresentado é texto.
-         * Ele não é mais um array que possa ser manipulado
-         * diretamente pelo JavaScript.
-         */
-        console.log(textoJson);
-    },
-
-    /*
-     * Apresenta os dados reconstruídos com JSON.parse().
-     *
-     * Depois da conversão, os dados deixam de ser apenas
-     * um texto JSON e voltam a ser valores JavaScript.
-     *
-     * Neste projeto, o resultado será novamente
-     * um array de objetos.
-     */
-    exibirDadosRecuperados(dados) {
-        console.log("Dados reconstruídos com JSON.parse():");
-
-        /*
-         * Como dados voltou a ser um array de objetos,
-         * podemos apresentá-lo com console.table().
-         */
-        console.table(dados);
+        AlunoView.elementos.saidaJson.textContent = textoJson;
     }
 };
