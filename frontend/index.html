@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <!--
+        Define o conjunto de caracteres utilizado pela página.
+
+        UTF-8 permite apresentar corretamente acentos,
+        cedilhas e outros caracteres especiais.
+    -->
+    <meta charset="UTF-8">
+
+    <!--
+        Configura a área visível da página em dispositivos móveis.
+
+        width=device-width:
+        faz a largura da página acompanhar a largura da tela.
+
+        initial-scale=1.0:
+        define o nível inicial de zoom como 100%.
+    -->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <!--
+        Define o título exibido na aba do navegador.
+    -->
+    <title>Sistema Acadêmico DS II</title>
+
+    <!--
+        Conecta o arquivo HTML ao arquivo de estilos CSS.
+
+        O caminho ./css/estilo.css indica que:
+        – o navegador começa na pasta onde está index.html;
+        – entra na pasta css;
+        – carrega o arquivo estilo.css.
+    -->
+    <link rel="stylesheet" href="./css/estilo.css">
+
+    <!--
+        Carrega o Model da aplicação.
+
+        O Model contém:
+        – os dados dos alunos;
+        – as validações;
+        – as regras do cadastro;
+        – os métodos de consulta.
+
+        Ele precisa ser carregado antes do Controller,
+        pois o Controller utiliza AlunoModel.
+    -->
+    <script
+        src="./js/model/aluno-model.js"
+        defer>
+    </script>
+
+    <script
+        src="./js/view/aluno-view.js"
+        defer>
+    </script>
+
+ is arquivos anteriores.
+    
+    <script
+        src="./js/controller/aluno-controller.js"
+        defer>
+    </script>
+    
+</head>
+
+<body>
+   elemento main.
+
+    <main>
+       
+        <h1>Sistema Acadêmico DS II</h1>
+
+      
+        <p>
+            Primeira versão do sistema utilizando MVC e JSON.
+        </p>
+
+     
+        <p>
+            Abra o console do navegador para acompanhar
+            a execução.
+        </p>
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,157 @@
+/*
+ * SELETOR UNIVERSAL
+ *
+ * O caractere * seleciona todos os elementos da página.
+*/
+* {
+    /*
+     * Faz com que padding e border sejam considerados
+     * dentro da largura e da altura definidas.
+     *
+     * Sem border-box, o padding seria acrescentado ao tamanho
+     * do elemento, aumentando suas dimensões finais.
+    */
+    box-sizing: border-box;
+}
+
+/*
+ * CONFIGURAÇÃO GERAL DA PÁGINA
+ *
+ * O seletor body representa todo o conteúdo visível
+ * do documento HTML.
+*/
+body {
+    /*
+     * Remove a margem que o navegador adiciona
+     * automaticamente ao redor da página.
+    */
+    margin: 0;
+
+    /*
+     * Define a altura mínima como 100% da altura da tela.
+     *
+     * vh significa viewport height.
+     * Portanto, 100vh representa toda a altura visível
+     * da janela do navegador.
+    */
+    min-height: 100vh;
+
+    /*
+     * Ativa o Flexbox.
+     *
+     * Isso permite controlar mais facilmente o alinhamento
+     * dos elementos filhos do body.
+     *
+     * Neste projeto, o elemento filho principal é main.
+    */
+    display: flex;
+
+    /*
+     * Centraliza o conteúdo verticalmente.
+     *
+     * Como o Flexbox está na direção padrão row,
+     * align-items controla o eixo vertical.
+    */
+    align-items: center;
+
+    /*
+     * Centraliza o conteúdo horizontalmente.
+     *
+     * justify-content controla o eixo principal,
+     * que neste caso é o eixo horizontal.
+    */
+    justify-content: center;
+
+    /*
+     * Define a fonte utilizada na página.
+     *
+     * O navegador tentará utilizar Arial.
+     * Se Arial não estiver disponível, utilizará
+     * outra fonte sem serifa.
+    */
+    font-family: Arial, sans-serif;
+
+    /*
+     * Define uma cor de fundo cinza-clara para a página.
+    */
+    background-color: #f4f6f8;
+
+    /*
+     * Define a cor padrão dos textos da página.
+     *
+     * Foi utilizado um tom escuro para manter
+     * uma boa leitura sobre o fundo claro.
+    */
+    color: #1f2937;
+}
+
+/*
+ * CONTEÚDO PRINCIPAL
+ *
+ * O seletor main representa a área principal da aplicação.
+*/
+main {
+    /*
+     * A função min() escolhe o menor valor entre:
+     *
+     * 90% da largura disponível;
+     * 700 pixels.
+     *
+     * Em telas grandes, o elemento terá no máximo 700px.
+     * Em telas pequenas, utilizará 90% da largura.
+     *
+     * Isso ajuda a tornar a página responsiva.
+    */
+    width: min(90%, 700px);
+
+    /*
+     * Adiciona um espaço interno de 32px.
+     *
+     * Esse espaço impede que o texto fique encostado
+     * nas bordas do elemento.
+    */
+    padding: 32px;
+
+    /*
+     * Arredonda os cantos do elemento.
+    */
+    border-radius: 8px;
+
+    /*
+     * Define o fundo do conteúdo principal como branco.
+    */
+    background-color: #ffffff;
+
+    /*
+     * Adiciona uma sombra ao redor do elemento.
+     *
+     * Os valores representam:
+     *
+     * 0   → deslocamento horizontal;
+     * 8px → deslocamento vertical;
+     * 24px → nível de desfoque;
+     * rgba → cor preta com 8% de opacidade.
+    */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/*
+ * TÍTULO PRINCIPAL
+ *
+ * O seletor h1 aplica estilos aos títulos de nível 1.
+*/
+h1 {
+    /*
+     * Remove a margem superior adicionada automaticamente
+     * pelo navegador.
+     *
+     * Isso evita um espaço excessivo entre o título
+     * e o início do elemento main.
+    */
+    margin-top: 0;
+
+    /*
+     * Define a cor do título utilizando um tom de azul.
+    */
+    color: #0f3d66;
+}
