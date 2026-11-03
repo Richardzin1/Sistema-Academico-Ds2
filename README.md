@@ -1,6 +1,6 @@
 # Sistema Acadêmico - DS2
 
-Sistema acadêmico full-stack desenvolvido para a disciplina de Desenvolvimento de Software 2. O projeto implementa o cadastro e listagem de alunos, utilizando arquitetura MVC (Model-View-Controller) em camadas tanto no frontend quanto no backend.
+Sistema acadêmico full-stack desenvolvido para a disciplina Desenvolvimento de servidores 2. O projeto implementa o cadastro e listagem de alunos, utilizando arquitetura MVC (Model-View-Controller) em camadas tanto no frontend quanto no backend.
 
 ---
 
