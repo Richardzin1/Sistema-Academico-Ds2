@@ -1,97 +1,66 @@
 /*
- * VIEW DE ALUNOS – VERSÃO COM DOM
+ * A View é responsável pela interface.
  *
- * Esta View é responsável por:
- * – localizar elementos HTML;
- * – ler os campos do formulário;
- * – observar o evento submit;
- * – apresentar mensagens;
- * – montar a tabela;
- * – apresentar o JSON.
-*/
+ * Ela lê o formulário, apresenta mensagens,
+ * atualiza a tabela e exibe o JSON.
+ */
 const AlunoView = {
-
     /*
-     * Objeto que armazenará referências aos elementos HTML.
-     *
-     * Isso evita repetir document.getElementById()
-     * várias vezes durante a execução.
+     * Armazena referências aos elementos HTML.
      */
     elementos: {},
 
     /*
-     * Localiza e armazena os elementos da página.
+     * Localiza os elementos da página.
      *
-     * Este método deve ser executado antes dos demais.
+     * Este método deve ser executado somente
+     * depois que o HTML estiver carregado.
      */
-inicializar() {
+    iniciar() {
         AlunoView.elementos.formulario =
-            document.getElementById("form-aluno");
+            document.querySelector("#form-aluno");
 
         AlunoView.elementos.ra =
-            document.getElementById("ra");
+            document.querySelector("#ra");
 
         AlunoView.elementos.nome =
-            document.getElementById("nome");
+            document.querySelector("#nome");
 
         AlunoView.elementos.email =
-            document.getElementById("email");
+            document.querySelector("#email");
 
         AlunoView.elementos.curso =
-            document.getElementById("curso");
+            document.querySelector("#curso");
 
         AlunoView.elementos.turma =
-            document.getElementById("turma");
+            document.querySelector("#turma");
 
         AlunoView.elementos.mensagem =
-            document.getElementById("mensagem");
+            document.querySelector("#mensagem");
 
         AlunoView.elementos.corpoTabela =
-            document.getElementById("corpo-tabela-alunos");
-
-        AlunoView.elementos.totalAlunos =
-            document.getElementById("total-alunos");
+            document.querySelector("#corpo-tabela-alunos");
 
         AlunoView.elementos.saidaJson =
-            document.getElementById("saida-json");
+            document.querySelector("#saida-json");
+
+        AlunoView.elementos.botaoSalvar =
+            document.querySelector("#botao-salvar");
     },
 
     /*
-     * Registra uma função que será executada quando
-     * o formulário for enviado.
-     *
-     * O parâmetro aoEnviar é uma função recebida
-     * do Controller.
+     * Registra a função que será executada
+     * quando o formulário for enviado.
      */
     configurarFormulario(aoEnviar) {
         AlunoView.elementos.formulario.addEventListener(
             "submit",
-            function (evento) {
-                /*
-                 * Impede o comportamento padrão do formulário,
-                 * que seria recarregar a página.
-                 */
-                evento.preventDefault();
-
-                /*
-                 * Lê os valores atuais do formulário.
-                 */
-                const dados = AlunoView.lerDados();
-
-                /*
-                 * Envia os dados para a função fornecida
-                 * pelo Controller.
-                 */
-                aoEnviar(dados);
-            }
+            aoEnviar
         );
     },
 
     /*
-     * Lê a propriedade value de cada campo.
-     *
-     * A View apenas coleta os valores.
-     * A normalização e a validação pertencem ao Model.
+     * Lê os valores digitados no formulário.
      */
     lerDados() {
         return {
@@ -104,125 +73,303 @@ inicializar() {
     },
 
     /*
-     * Apresenta uma mensagem de sucesso.
+     * Apresenta uma mensagem na interface.
+     *
+     * O tipo pode ser:
+     *
+     * – sucesso;
+     * – erro;
+     * – informacao.
      */
-    exibirSucesso(mensagem) {
-        AlunoView.elementos.mensagem.textContent = mensagem;
-
-        /*
-         * Define as classes utilizadas pelo CSS.
-         */
-        AlunoView.elementos.mensagem.className =
-            "mensagem sucesso";
-    },
-
-    /*
-     * Apresenta uma mensagem de erro.
-     */
-    exibirErro(mensagem) {
+    exibirMensagem(mensagem, tipo) {
         AlunoView.elementos.mensagem.textContent = mensagem;
 
         AlunoView.elementos.mensagem.className =
-            "mensagem erro";
+            `mensagem ${tipo}`;
     },
 
     /*
-     * Limpa os campos depois de um cadastro bem-sucedido.
+     * Cria uma célula da tabela.
+     *
+     * textContent é utilizado para inserir o texto
+     * de forma segura, sem interpretá-lo como HTML.
      */
-    limparFormulario() {
-        AlunoView.elementos.formulario.reset();
+    criarCelula(valor) {
+        const celula = document.createElement("td");
 
-        /*
-         * Devolve o foco ao campo RA para facilitar
-         * o próximo cadastro.
-         */
-        AlunoView.elementos.ra.focus();
+        celula.textContent = valor;
+
+        return celula;
     },
 
     /*
-     * Apresenta a lista de alunos na tabela.
+     * Exibe a lista de alunos na tabela.
      */
     exibirLista(alunos) {
-        const corpoTabela = AlunoView.elementos.corpoTabela;
-
         /*
-         * Remove as linhas apresentadas anteriormente.
+         * Remove as linhas exibidas anteriormente.
          */
-        corpoTabela.textContent = "";
+        AlunoView.elementos.corpoTabela.innerHTML = "";
 
         /*
-         * Atualiza a quantidade de alunos.
-         */
-        AlunoView.elementos.totalAlunos.textContent =
-            `Total: ${alunos.length}`;
-
-        /*
-         * Se não houver alunos, cria uma linha informativa.
+         * Se o array estiver vazio, cria uma linha
+         * informando que não existem alunos.
          */
         if (alunos.length === 0) {
             const linha = document.createElement("tr");
             const celula = document.createElement("td");
 
             celula.colSpan = 7;
-            celula.textContent = "Nenhum aluno foi cadastrado.";
+            celula.textContent =
+                "Nenhum aluno foi cadastrado.";
 
             linha.appendChild(celula);
-            corpoTabela.appendChild(linha);
+
+            AlunoView.elementos.corpoTabela.appendChild(
+                linha
+            );
 
             return;
         }
 
         /*
-         * Percorre o array e cria uma linha para cada aluno.
+         * Cria uma linha para cada aluno recebido.
          */
-        alunos.forEach(function (aluno) {
+        alunos.forEach(aluno => {
             const linha = document.createElement("tr");
 
-            /*
-             * Organiza os valores na mesma ordem
-             * das colunas existentes no HTML.
-             */
-            const valores = [
-                aluno.id,
-                aluno.ra,
-                aluno.nome,
-                aluno.email,
-                aluno.curso,
-                aluno.turma,
+            linha.appendChild(
+                AlunoView.criarCelula(aluno.id)
+            );
 
-                /*
-                 * Operador ternário:
-                 * – se ativo for true, apresenta "Ativo";
-                 * – caso contrário, apresenta "Inativo".
-                 */
-                aluno.ativo ? "Ativo" : "Inativo"
-            ];
+            linha.appendChild(
+                AlunoView.criarCelula(aluno.ra)
+            );
 
-            /*
-             * Cria uma célula para cada valor.
-             */
-            valores.forEach(function (valor) {
-                const celula = document.createElement("td");
+            linha.appendChild(
+                AlunoView.criarCelula(aluno.nome)
+            );
 
-                /*
-                 * textContent insere o valor como texto.
-                 *
-                 * Não utilizamos innerHTML com dados fornecidos
-                 * pelo usuário.
-                 */
-                celula.textContent = valor;
+            linha.appendChild(
+                AlunoView.criarCelula(aluno.email)
+            );
 
-                linha.appendChild(celula);
-            });
+            linha.appendChild(
+                AlunoView.criarCelula(aluno.curso)
+            );
 
-            corpoTabela.appendChild(linha);
+            linha.appendChild(
+                AlunoView.criarCelula(aluno.turma)
+            );
+
+            linha.appendChild(
+                AlunoView.criarCelula(
+                    aluno.ativo ? "Sim" : "Não"
+                )
+            );
+
+            AlunoView.elementos.corpoTabela.appendChild(
+                linha
+            );
         });
     },
 
     /*
-     * Apresenta o texto JSON dentro da tag pre.
+     * Exibe os alunos no formato JSON.
      */
-    exibirJson(textoJson) {
-        AlunoView.elementos.saidaJson.textContent = textoJson;
+    exibirJson(alunos) {
+        AlunoView.elementos.saidaJson.textContent =
+            JSON.stringify(alunos, null, 2);
+    },
+
+    /*
+     * Limpa os campos depois de um cadastro.
+     */
+    limparFormulario() {
+        AlunoView.elementos.formulario.reset();
+
+        /*
+         * Devolve o foco para o campo RA.
+         */
+        AlunoView.elementos.ra.focus();
+    },
+
+    /*
+     * Altera o estado do formulário durante
+     * uma operação assíncrona.
+     */
+    alterarEstadoFormulario(processando) {
+        /*
+         * Impede vários envios enquanto a requisição
+         * estiver em andamento.
+         */
+        AlunoView.elementos.botaoSalvar.disabled =
+            processando;
     }
 };
+/*
+ * O Controller coordena:
+ *
+ * – Model;
+ * – View;
+ * – Service.
+ */
+const AlunoController = {
+    /*
+     * Inicializa a aplicação.
+     *
+     * A função é assíncrona porque, ao abrir a página,
+     * consultaremos os alunos no backend.
+     */
+    async iniciar() {
+        /*
+         * Localiza os elementos HTML.
+         */
+        AlunoView.iniciar();
+
+        /*
+         * Configura o evento de envio do formulário.
+         */
+        AlunoView.configurarFormulario(
+            AlunoController.cadastrar
+        );
+
+        /*
+         * Informa que os dados estão sendo carregados.
+         */
+        AlunoView.exibirMensagem(
+            "Carregando alunos...",
+            "informacao"
+        );
+
+        try {
+            /*
+             * Consulta os alunos existentes no servidor.
+             */
+            await AlunoController.atualizarVisualizacao();
+
+            AlunoView.exibirMensagem(
+                "Dados carregados com sucesso.",
+                "sucesso"
+            );
+        } catch (erro) {
+            AlunoView.exibirMensagem(
+                erro.message,
+                "erro"
+            );
+        }
+    },
+
+    /*
+     * Executa o cadastro do aluno.
+     */
+    async cadastrar(evento) {
+        /*
+         * Evita o recarregamento da página.
+         */
+        evento.preventDefault();
+
+        /*
+         * Solicita à View os valores do formulário.
+         */
+        const dadosInformados = AlunoView.lerDados();
+
+        /*
+         * Encaminha os dados para a validação inicial.
+         */
+        const validacao = AlunoModel.validar(
+            dadosInformados
+        );
+
+        /*
+         * Interrompe o processo caso a validação
+         * do frontend encontre um problema.
+         */
+        if (!validacao.sucesso) {
+            AlunoView.exibirMensagem(
+                validacao.mensagem,
+                "erro"
+            );
+
+            return;
+        }
+
+        /*
+         * Desabilita temporariamente o botão.
+         */
+        AlunoView.alterarEstadoFormulario(true);
+
+        AlunoView.exibirMensagem(
+            "Enviando dados para o servidor...",
+            "informacao"
+        );
+
+        try {
+            /*
+             * Envia o aluno para o backend.
+             */
+            const resultado =
+                await AlunoService.cadastrar(
+                    validacao.dados
+                );
+
+            /*
+             * Consulta novamente a lista do servidor.
+             */
+            await AlunoController.atualizarVisualizacao();
+
+            /*
+             * Limpa o formulário depois do sucesso.
+             */
+            AlunoView.limparFormulario();
+
+            /*
+             * Apresenta a mensagem devolvida pela API.
+             */
+            AlunoView.exibirMensagem(
+                resultado.mensagem,
+                "sucesso"
+            );
+        } catch (erro) {
+            /*
+             * Apresenta erros de validação da API,
+             * RA duplicado ou falha de conexão.
+             */
+            AlunoView.exibirMensagem(
+                erro.message,
+                "erro"
+            );
+        } finally {
+            /*
+             * O bloco finally sempre será executado,
+             * independentemente do sucesso ou do erro.
+             */
+            AlunoView.alterarEstadoFormulario(false);
+        }
+    },
+
+    /*
+     * Consulta os alunos na API e atualiza a View.
+     */
+    async atualizarVisualizacao() {
+        /*
+         * Aguarda o Service consultar o backend.
+         */
+        const alunos = await AlunoService.listar();
+
+        /*
+         * Atualiza a tabela.
+         */
+        AlunoView.exibirLista(alunos);
+
+        /*
+         * Atualiza a apresentação em JSON.
+         */
+        AlunoView.exibirJson(alunos);
+    }
+};
+
+/*
+ * Inicia a aplicação.
+ */
+AlunoController.iniciar();

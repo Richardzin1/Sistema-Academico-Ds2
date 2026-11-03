@@ -1,71 +1,91 @@
+/*
+ * O Model do frontend representa e valida os dados
+ * que serão enviados para a API.
+ *
+ * A validação do frontend melhora a experiência
+ * do usuário, mas não substitui a validação realizada
+ * pelo backend.
+ */
 const AlunoModel = {
-  alunos: [],
+    /*
+     * Converte o valor para texto e remove
+     * os espaços do início e do final.
+     */
+    normalizarTexto(valor) {
+        /*
+         * Se o valor não existir, retornamos
+         * uma string vazia.
+         */
+        if (valor === null || valor === undefined) {
+            return "";
+        }
 
-  normalizarTexto(valor) {
-    if (valor === null || valor === undefined) {
-      return "";
+        return String(valor).trim();
+    },
+
+    /*
+     * Realiza uma validação inicial do e-mail.
+     */
+    validarEmail(email) {
+        return email.includes("@") && email.includes(".");
+    },
+
+    /*
+     * Normaliza e valida os dados informados
+     * no formulário.
+     */
+validar(dados) {
+        /*
+         * Cria um novo objeto com os valores
+         * normalizados.
+         */
+        const aluno = {
+            ra: AlunoModel.normalizarTexto(dados.ra),
+            nome: AlunoModel.normalizarTexto(dados.nome),
+            /*
+             * O e-mail também será convertido
+             * para letras minúsculas.
+             */
+            email: AlunoModel
+                .normalizarTexto(dados.email)
+                .toLowerCase(),
+            curso: AlunoModel.normalizarTexto(dados.curso),
+            turma: AlunoModel.normalizarTexto(dados.turma)
+        };
+
+        /*
+         * Verifica se todos os campos foram preenchidos.
+         */
+        if (
+            aluno.ra === "" ||
+            aluno.nome === "" ||
+            aluno.email === "" ||
+            aluno.curso === "" ||
+            aluno.turma === ""
+        ) {
+            return {
+                sucesso: false,
+                mensagem: "Todos os campos são obrigatórios."
+            };
+        }
+
+        /*
+         * Verifica o formato inicial do e-mail.
+         */
+        if (!AlunoModel.validarEmail(aluno.email)) {
+            return {
+                sucesso: false,
+                mensagem: "Informe um e-mail válido."
+            };
+        }
+
+        /*
+         * Se os dados forem válidos, devolvemos
+         * o objeto preparado para ser enviado à API.
+         */
+        return {
+            sucesso: true,
+            dados: aluno
+        };
     }
-    return String(valor).trim();
-  },
-
-  ValidarEmail(email) {
-    return email.includes("@") && email.includes(".");
-  },
-
-  localizarPorRa(ra) {
-    return AlunoModel.alunos.find((aluno) => aluno.ra === ra);
-  },
-
-  cadastrar(dados) {
-    const ra = AlunoModel.normalizarTexto(dados.ra);
-    const nome = AlunoModel.normalizarTexto(dados.nome);
-    const email = AlunoModel.normalizarTexto(dados.email);
-    const curso = AlunoModel.normalizarTexto(dados.curso);
-    const turma = AlunoModel.normalizarTexto(dados.turma);
-
-    if (
-      ra === "" ||
-      email === "" ||
-      nome === "" ||
-      curso === "" ||
-      turma === ""
-    ) {
-      return {
-        sucesso: false,
-        mensagem: "Todos os campos são obrigatórios.",
-      };
-    }
-
-    if (!AlunoModel.ValidarEmail(email)) {
-      return {
-        sucesso: false,
-        mensagem: "Informe um email válido.",
-      };
-    }
-
-    if (AlunoModel.localizarPorRa(ra)) {
-      return { sucesso: false, mensagem: " Já existe um aluno com esse RA." };
-    }
-
-    const aluno = {
-      id: AlunoModel.alunos.length + 1,
-      ra: ra,
-      nome: nome,
-      email: email,
-      curso: curso,
-      turma: turma,
-
-      ativo: true,
-    };
-    AlunoModel.alunos.push(aluno);
-
-    return {
-      sucesso: true,
-      aluno: aluno,
-    };
-  },
-
-  listar() {
-    return [...AlunoModel.alunos];
-  },
 };

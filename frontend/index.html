@@ -18,10 +18,7 @@
         initial-scale=1.0:
         inicia a página com zoom de 100%.
     -->
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!--
         Texto apresentado na aba do navegador.
@@ -51,9 +48,7 @@
         Ele é carregado antes do Controller porque
         o Controller utilizará AlunoModel.
     -->
-    <script
-        src="./js/model/aluno-model.js"
-        defer>
+    <script src="./js/model/aluno-model.js" defer>
     </script>
 
     <!--
@@ -70,9 +65,7 @@
         Ela é carregada antes do Controller porque
         o Controller utilizará AlunoView.
     -->
-    <script
-        src="./js/view/aluno-view.js"
-        defer>
+    <script src="./js/view/aluno-view.js" defer>
     </script>
 
     <!--
@@ -84,9 +77,7 @@
         Ele precisa ser carregado por último porque
         depende dos dois objetos anteriores.
     -->
-    <script
-        src="./js/controller/aluno-controller.js"
-        defer>
+    <script src="./js/controller/aluno-controller.js" defer>
     </script>
 
     <!--
@@ -198,25 +189,13 @@
                             required:
                             informa semanticamente que o campo é obrigatório.
                         -->
-                        <input
-                            type="text"
-                            id="ra"
-                            name="ra"
-                            placeholder="Exemplo: 2026001"
-                            required
-                        >
+                        <input type="text" id="ra" name="ra" placeholder="Exemplo: 2026001" required>
                     </div>
 
                     <!-- Campo destinado ao nome. -->
                     <div class="campo">
                         <label for="nome">Nome</label>
-                        <input
-                            type="text"
-                            id="nome"
-                            name="nome"
-                            placeholder="Nome completo"
-                            required
-                        >
+                        <input type="text" id="nome" name="nome" placeholder="Nome completo" required>
                     </div>
 
                     <!-- Campo destinado ao e-mail. -->
@@ -231,37 +210,19 @@
                             a validação utilizada na atividade
                             continuará sendo a do Model.
                         -->
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="aluno@email.com"
-                            required
-                        >
+                        <input type="email" id="email" name="email" placeholder="aluno@email.com" required>
                     </div>
 
                     <!-- Campo destinado ao curso. -->
                     <div class="campo">
                         <label for="curso">Curso</label>
-                        <input
-                            type="text"
-                            id="curso"
-                            name="curso"
-                            placeholder="Exemplo: DSM"
-                            required
-                        >
+                        <input type="text" id="curso" name="curso" placeholder="Exemplo: DSM" required>
                     </div>
 
                     <!-- Campo destinado à turma. -->
                     <div class="campo">
                         <label for="turma">Turma</label>
-                        <input
-                            type="text"
-                            id="turma"
-                            name="turma"
-                            placeholder="Exemplo: 2 DSM"
-                            required
-                        >
+                        <input type="text" id="turma" name="turma" placeholder="Exemplo: 2 DSM" required>
                     </div>
                 </div>
 
@@ -274,9 +235,12 @@
                     A View observará esse evento por meio
                     de addEventListener().
                 -->
-                <button type="submit">
-                    Cadastrar aluno
-                </button>
+                <div class="acoes-formulario">
+                    <button id="botao-salvar" type="submit">
+                        Cadastrar aluno
+                    </button>
+
+                </div>
             </form>
 
             <!--
@@ -297,12 +261,7 @@
                 permite que leitores de tela anunciem mudanças
                 sem interromper imediatamente o usuário.
             -->
-            <div
-                id="mensagem"
-                class="mensagem"
-                role="status"
-                aria-live="polite"
-            ></div>
+            <div id="mensagem" class="mensagem" role="status" aria-live="polite"></div>
         </section>
 
         <!--
@@ -412,5 +371,24 @@
         </section>
     </main>
 </body>
+<script
+    src="./js/model/aluno-model.js"
+    defer>
+</script>
+
+<script
+    src="./js/service/aluno-service.js"
+    defer>
+</script>
+
+<script
+    src="./js/view/aluno-view.js"
+    defer>
+</script>
+
+<script
+    src="./js/controller/aluno-controller.js"
+    defer>
+</script>
 
 </html>
